@@ -8,23 +8,28 @@
 
   <title>Inicio | PAGA IMT</title>
 
-  {{-- Estilos oficiales gob.mx (cambia solo este link por sexenio) --}}
+  <!-- Estilos oficiales gob.mx (cambia solo este link por sexenio) -->
   <link rel="stylesheet" href="https://framework-gb.cdn.gob.mx/assets/styles/main.css">
 
-  {{-- Fuente Montserrat --}}
+  <!-- Fuente Montserrat -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --vino:#611232;
+      /* Si el framework publica una variable global (p. ej. --color-primario), remapea aquí: */
+      /* --gob-primary: var(--color-primario); */
+      --gob-primary:#611232; /* fallback actual */
       --gris:#98989A;
-      --dorado:#a57f2c;
       --negro:#111111;
       --blanco:#ffffff;
+      --borde:#e5e5e5;
+      --dorado:#a57f2c;
     }
-    body, h1, h2, h3, h4, h5, h6, p, a, li {
-      font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
+
+    /* Tipografía unificada */
+    body, h1, h2, h3, h4, h5, h6, p, a, li, label, input, select, button, th, td{
+      font-family:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif !important;
     }
 
     /* ====== Encabezado visual del contenido ====== */
@@ -34,7 +39,7 @@
     }
     .banner-logos img{ max-height:74px; height:auto; width:auto; }
     @media (max-width: 768px){
-      .banner-logos{ justify-content:center; }
+      .banner-logos{ justify-content:center; flex-wrap:wrap; }
       .banner-logos img{ max-height:56px; }
       .banner-logos .left{ order:1; }
       .banner-logos .right{ order:2; }
@@ -61,9 +66,9 @@
       width:100%;
     }
 
-    /* ====== Caja de mensaje (si más adelante la activas) ====== */
+    /* ====== Panel informativo (opcional) ====== */
     .panel-gold{
-      border: 1px solid #e5e5e5;
+      border: 1px solid var(--borde);
       border-top: 4px solid var(--dorado);
       background: #fff;
       border-radius: 4px;
@@ -73,21 +78,23 @@
     .panel-gold .lead{ color: var(--negro); margin:0 0 6px 0; font-weight:500; }
     .panel-gold .muted{ color: var(--gris); margin:0; }
 
-    /* ====== Acordeón compacto, centrado y con icono + / − ====== */
+    /* ====== Acordeón compacto y accesible ====== */
     .acordeon .panel{
-      border:1px solid #e5e5e5; border-radius:4px; box-shadow:none;
+      border:1px solid var(--borde); border-radius:4px; box-shadow:none;
     }
-    /* Quitamos padding al header y lo controlamos con el enlace-flex */
     .acordeon .panel-heading{
-      background:#f5f5f5; border-bottom:1px solid #e5e5e5; padding:0;
+      background:#f5f5f5; border-bottom:1px solid var(--borde); padding:0;
     }
-    /* Enlace que actúa como botón: centra vertical y elimina “aire” */
     .acordeon .heading-toggle{
       display:flex; align-items:center; justify-content:space-between;
-      gap:12px; padding:10px 14px; text-decoration:none;
+      gap:12px; padding:10px 14px;
+      text-decoration:none;
       color:var(--negro); font-weight:600; line-height:1.2;
     }
-    .acordeon .heading-toggle:focus { outline: none !important; box-shadow: none !important; }
+    /* Enfoque accesible sin “ensuciar” borde */
+    .acordeon .heading-toggle:focus-visible{
+      outline:2px solid #444; outline-offset:2px; box-shadow:none;
+    }
 
     .acordeon .panel-body{
       background:#fff; padding:14px 18px;
@@ -107,8 +114,33 @@
     }
     .toggle-indicator::before{ width:14px; height:2px; }  /* “−” horizontal */
     .toggle-indicator::after { width:2px;  height:14px; } /* “|” vertical (para “+”) */
-    /* Cuando está abierto (expanded=true) ocultamos la barra vertical ⇒ “−” */
     .heading-toggle[aria-expanded="true"] .toggle-indicator::after{ opacity:0; }
+
+    /* ====== Utilidades de botones coherentes con el resto del sitio ====== */
+    .btn, .btn:hover, .btn:focus, .btn:active{ text-decoration:none !important; }
+    .btn{ min-height:40px; }
+    .btn:focus-visible{ outline:2px solid #444; outline-offset:2px; box-shadow:none; }
+    .btn.btn-primary{ background-color:var(--gob-primary); color:#fff !important; border:1px solid var(--gob-primary); }
+    .btn.btn-primary:hover, .btn.btn-primary:focus, .btn.btn-primary:active{
+      background-color:#4d0e29; border-color:#4d0e29; color:#fff !important;
+    }
+    .btn.btn-primary:focus-visible{ outline-color:#fff; }
+    .btn.btn-default{ font-weight:400; background:#fff; color:#444; border:1px solid #ccc; }
+    .btn.btn-default:hover, .btn.btn-default:focus, .btn.btn-default:active{
+      background:#fff; color:#444; border:1px solid #ccc; box-shadow:none;
+    }
+
+    /* === FIX menú hamburguesa gris en móvil === */
+    .navbar-toggle .icon-bar{ background-color:#fff !important; }
+    .navbar-toggle,
+    .navbar-toggle:hover,
+    .navbar-toggle:focus,
+    .navbar-toggle:active{
+      background:transparent !important;
+      box-shadow:none !important;
+      border-color:transparent !important;
+    }
+    .navbar-toggle:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
   </style>
 </head>
 <body>
@@ -132,7 +164,6 @@
       <div class="panel-group acordeon" id="acordeon-dependencia" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default">
           <div class="panel-heading" role="tab" id="heading-sict">
-            <!-- Enlace-flex que controla el collapse. Texto centrado vertical + icono -->
             <a class="heading-toggle"
                role="button"
                data-toggle="collapse"
@@ -153,10 +184,20 @@
         </div>
       </div>
 
+      {{-- Ejemplo de botones (opcional)
+      <div class="row" style="margin-top:16px;">
+        <div class="col-xs-6">
+          <a href="{{ route('seleccion') }}" class="btn btn-primary">Iniciar trámite</a>
+        </div>
+        <div class="col-xs-6 text-right">
+          <a href="https://www.gob.mx" class="btn btn-default">Gob.mx</a>
+        </div>
+      </div>
+      --}}
     </div>
   </main>
 
-  {{-- Script oficial para inyectar header/footer y habilitar componentes (collapse, etc.) --}}
+  <!-- Script oficial para header/footer y componentes -->
   <script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>
 </body>
 </html>
