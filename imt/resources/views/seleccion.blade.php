@@ -16,9 +16,9 @@
   <style>
     :root{
       --vino:#611232;
-      --negro:#111111;
-      --grisTexto:#666666;
-      --borde:#E5E5E5;
+      --negro:#111;
+      --grisTexto:#666;
+      --borde:#e5e5e5;
     }
     body, h1,h2,h3,h4,h5,h6,p,a,li,label,input,select,button,th,td{
       font-family:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif !important;
@@ -37,7 +37,7 @@
       line-height:1.15;
     }
 
-    /* ===== STEPPER (centrado, sin chevrons, radio mínimo) ===== */
+    /* ===== Stepper ===== */
     .stepper{
       display:flex;
       justify-content:center;
@@ -56,70 +56,74 @@
     }
     .step strong{ display:block; font-weight:700; }
     .step small{ display:block; color:var(--grisTexto); font-weight:500; margin-top:2px; }
-
-    .step.active{
-      background:var(--vino);
-      color:#fff;
-      border-color:var(--vino);
-    }
+    .step.active{ background:var(--vino); color:#fff; border-color:var(--vino); }
     .step.active small{ color:#fff; opacity:.95; }
 
-    /* ===== Subtítulo + leyenda (quitar hueco a la fuerza) ===== */
-    h3.subtitulo{
-      margin:4px 0 0 !important;
-      line-height:1.2;
-      font-weight:700; color:#222;
-    }
+    /* ===== Subtítulo y leyenda ===== */
+    h3.subtitulo{ margin:4px 0 0 !important; line-height:1.2; font-weight:700; color:#222; }
     h3.subtitulo + .lbl-muted{ margin-top:0 !important; }
-    .lbl-muted{
-      color:#666;
-      margin:0 0 12px !important;
-      line-height:1.45;
-    }
+    .lbl-muted{ color:var(--grisTexto); margin:0 0 12px !important; line-height:1.45; }
 
-    /* ===== Formulario y tabla ===== */
+    /* ===== Formulario ===== */
     .form-inline-imt{ display:flex; gap:10px; align-items:center; margin:10px 0 16px; }
-
-    /* Ajuste estético de la flecha del <select> */
     .form-inline-imt select{
       flex:1;
       min-height:36px;
       border:1px solid #cfcfcf;
       padding:6px 10px;
       border-radius:3px;
-
-      /* ocultar flecha nativa y colocar chevron con espacio a la derecha */
       -webkit-appearance:none;
       -moz-appearance:none;
       appearance:none;
-      padding-right:2.25rem; /* espacio para la flecha */
+      padding-right:2.25rem;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
       background-repeat:no-repeat;
-      background-position: right 12px center; /* separa la flecha del borde */
+      background-position: right 12px center;
       background-size:14px;
     }
-    /* ocultar el expand de IE/Edge heredado */
     select::-ms-expand{ display:none; }
 
     .tabla-imt{ width:100%; border-collapse:collapse; margin-top:8px; margin-bottom:14px; }
     .tabla-imt thead th{ color:#444; font-weight:600; border-bottom:2px solid var(--borde); padding:10px 8px; }
     .tabla-imt tbody td{ border-top:1px solid var(--borde); padding:10px 8px; vertical-align:middle; }
 
-    /* ===== Botones ===== */
+    /* ===== Botones (misma lógica que informacion.blade.php) ===== */
     .btn-vino{
-      background:var(--vino); color:#fff; border:1px solid #5a0f2f; border-radius:4px;
-      padding:8px 16px; font-weight:600;
+      background:var(--vino);
+      color:#fff;
+      border:1px solid #5a0f2f;
+      border-radius:4px;
+      padding:8px 16px;
+      font-weight:600;
     }
-    .btn-vino:hover{ background:#6d173a; color:#fff; }
-    .btn-outline-vino{
-      background:#fff; color:var(--vino); border:1px solid #d99; border-radius:4px; padding:8px 16px;
+    .btn-outline{
+      background:#fff;
+      color:#444;
+      border:1px solid #ccc;
+      border-radius:4px;
+      padding:8px 16px;
     }
-    .btn-outline-vino:hover{ background:#fce7ec; }
+
+    /* Mantener texto blanco en hover en botón siguiente */
+    .btn-vino,
+    .btn-vino:link,
+    .btn-vino:visited,
+    .btn-vino:hover,
+    .btn-vino:focus,
+    .btn-vino:active {
+      color: #fff !important;
+      text-decoration: none;
+    }
+    .btn-vino:hover,
+    .btn-vino:focus {
+      background:#71203f;
+      border-color:#631a37;
+    }
 
     @media (max-width:768px){
       .step{ min-width:180px; }
       .form-inline-imt{ flex-direction:column; align-items:stretch; }
-      .btn-outline-vino,.btn-vino{ width:100%; }
+      .btn-outline, .btn-vino{ width:100%; }
     }
   </style>
 </head>
@@ -134,26 +138,16 @@
         <li class="active">Instituto Mexicano del Transporte</li>
       </ol>
 
-      {{-- Título --}}
       <center><h1 class="titulo-pagina">Instituto Mexicano del Transporte</h1></center>
 
-      {{-- STEPPER (en esta vista Paso 1 activo) --}}
       <div class="stepper" role="group" aria-label="Progreso del trámite">
         <div class="step active" aria-current="step">
-          <center><strong>Paso 1</strong>
-          <small>Selección del trámite</small></center>
+          <center><strong>Paso 1</strong><small>Selección del trámite</small></center>
         </div>
-        <div class="step">
-          <center><strong>Paso 2</strong>
-          <small>Información de la persona</small></center>
-        </div>
-        <div class="step">
-          <center><strong>Paso 3</strong>
-          <small>Formato de pago</small></center>
-        </div>
+        <div class="step"><center><strong>Paso 2</strong><small>Información de la persona</small></center></div>
+        <div class="step"><center><strong>Paso 3</strong><small>Formato de pago</small></center></div>
       </div>
 
-      {{-- Sección principal --}}
       <h3 class="subtitulo">Selección del trámite:</h3>
       <p class="lbl-muted">Identifique y seleccione el trámite y/o servicio.</p>
 
@@ -165,7 +159,7 @@
           <option value="2">Renovación de licencia de operador</option>
           <option value="3">Inscripción a curso de seguridad vial</option>
         </select>
-        <a class="btn btn-outline-vino" href="{{ route('informacion') }}">Seleccionar</a>
+        <a class="btn btn-vino" href="{{ route('informacion') }}">Seleccionar</a>
       </div>
 
       <table class="tabla-imt">
@@ -181,14 +175,21 @@
         </tbody>
       </table>
 
-      <div class="text-right" style="margin:12px 0 26px;">
-        <a class="btn btn-vino" href="{{ route('informacion') }}">Siguiente</a>
+      <div class="row" style="margin-top:16px;">
+        <div class="col-xs-6">
+          <a href="{{ route('inicio') }}" class="btn btn-outline">Atrás</a>
+        </div>
+        <div class="col-xs-6 text-right">
+          <a href="{{ route('informacion') }}" class="btn btn-vino">Siguiente</a>
+        </div>
       </div>
+
+      <br>
+      <p class="lbl-muted" style="margin-top:10px;"><strong>*</strong> Campos obligatorios</p>
 
     </div>
   </main>
 
-  {{-- Script gob.mx (header/footer, colapsables, etc.) --}}
   <script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>
 </body>
 </html>

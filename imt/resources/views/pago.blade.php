@@ -25,7 +25,7 @@
     /* Ocultar líneas doradas */
     .linea-dorada, .subrayado-dorado{ display:none !important; }
 
-    /* ===== Stepper centrado (como en selección) ===== */
+    /* ===== Stepper centrado ===== */
     .stepper{ display:flex; justify-content:center; gap:10px; margin:10px 0 22px; flex-wrap:wrap; }
     .step{
       display:flex; flex-direction:column; justify-content:center;
@@ -37,22 +37,69 @@
     .step.active{ background:var(--vino); color:#fff; border-color:var(--vino); }
     .step.active small{ color:#fff; opacity:.95; }
 
-    /* Subtítulo + leyenda (espaciado compacto) */
+    /* Subtítulo + leyenda */
     h3.subtitulo{ margin:4px 0 0 !important; line-height:1.2; font-weight:700; color:#222; }
     h3.subtitulo + .lbl-muted{ margin-top:0 !important; }
     .lbl-muted{ color:var(--grisTexto); margin:0 0 12px !important; line-height:1.45; }
 
-    /* Tabla pago */
+    /* ===== Tabla pago ===== */
     .tabla-pago{ width:100%; border-collapse:collapse; }
     .tabla-pago th, .tabla-pago td{ padding:10px 8px; border-top:1px solid var(--borde); vertical-align:middle; }
     .tabla-pago thead th{ border-top:none; color:#444; font-weight:600; }
     .importe{ width:220px; text-align:right; white-space:nowrap; }
     .input-mini{ width:140px; min-height:36px; border:1px solid #cfcfcf; padding:6px 10px; border-radius:3px; text-align:right; }
 
-    .btn-outline-vino{ background:#fff; color:var(--vino); border:1px solid #d99; border-radius:4px; padding:8px 16px; }
-    .btn-outline-vino:hover{ background:#fce7ec; }
-    .btn-vino{ background:var(--vino); color:#fff; border:1px solid #5a0f2f; border-radius:4px; padding:8px 16px; font-weight:600; }
+    /* ===== Botones ===== */
+    .btn-vino{
+      background:var(--vino);
+      color:#fff;
+      border:1px solid #5a0f2f;
+      border-radius:4px;
+      padding:8px 16px;
+      font-weight:600;
+    }
+
+    /* Botón Atrás limpio y estático */
+    .btn-outline{
+      background:#fff;
+      color:#444;
+      border:1px solid #ccc;
+      border-radius:4px;
+      padding:8px 16px;
+      font-weight:400; /* texto normal */
+    }
+    /* Sin cambios en hover ni focus */
+    .btn-outline:hover,
+    .btn-outline:focus,
+    .btn-outline:active{
+      background:#fff;
+      color:#444;
+      border:1px solid #ccc; /* mantiene el mismo color siempre */
+      text-decoration:none;
+    }
+
+    /* Mantener texto blanco en todos los estados del botón principal */
+    .btn-vino,
+    .btn-vino:link,
+    .btn-vino:visited,
+    .btn-vino:hover,
+    .btn-vino:focus,
+    .btn-vino:active{
+      color:#fff !important;
+      text-decoration:none;
+    }
+    .btn-vino:hover,
+    .btn-vino:focus{
+      background:#71203f;
+      border-color:#631a37;
+    }
+
     .totales{ text-align:right; }
+
+    @media (max-width:768px){
+      .step{ min-width:180px; }
+      .btn-outline, .btn-vino{ width:100%; }
+    }
   </style>
 </head>
 <body>
@@ -111,7 +158,7 @@
 
       <div class="row" style="margin-top:18px;">
         <div class="col-xs-6">
-          <a href="{{ route('informacion') }}" class="btn btn-outline-vino">Atrás</a>
+          <a href="{{ route('informacion') }}" class="btn btn-outline">Atrás</a>
         </div>
         <div class="col-xs-6 text-right">
           <a href="#" class="btn btn-vino">Generar línea de captura</a>
@@ -119,7 +166,6 @@
       </div>
 
       <br>
-
       <p class="lbl-muted" style="margin-top:10px;"><strong>*</strong> Campos obligatorios</p>
 
     </div>

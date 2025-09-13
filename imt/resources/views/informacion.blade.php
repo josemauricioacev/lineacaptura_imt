@@ -25,7 +25,7 @@
     /* Ocultar líneas doradas */
     .linea-dorada, .subrayado-dorado{ display:none !important; }
 
-    /* ===== Stepper centrado (como en selección) ===== */
+    /* ===== Stepper centrado ===== */
     .stepper{ display:flex; justify-content:center; gap:10px; margin:10px 0 22px; flex-wrap:wrap; }
     .step{
       display:flex; flex-direction:column; justify-content:center;
@@ -37,7 +37,7 @@
     .step.active{ background:var(--vino); color:#fff; border-color:var(--vino); }
     .step.active small{ color:#fff; opacity:.95; }
 
-    /* Subtítulo + leyenda (espaciado compacto) */
+    /* Subtítulo + leyenda */
     h3.subtitulo{ margin:4px 0 0 !important; line-height:1.2; font-weight:700; color:#222; }
     h3.subtitulo + .lbl-muted{ margin-top:0 !important; }
     .lbl-muted{ color:var(--grisTexto); margin:0 0 12px !important; line-height:1.45; }
@@ -47,22 +47,51 @@
     .form-grid label{ font-weight:600; color:#444; margin-bottom:6px; display:block; }
     .form-grid input, .form-grid select{ width:100%; min-height:36px; border:1px solid #cfcfcf; padding:6px 10px; border-radius:3px; }
 
-    /* ===== Flecha del <select> con margen estético ===== */
-    /* Aplica a todos los selects del formulario, incluido #tipoPersona */
+    /* Flecha estética de select */
     .form-grid select, #tipoPersona{
       -webkit-appearance:none;
       -moz-appearance:none;
       appearance:none;
-      padding-right:2.25rem; /* espacio para la flecha */
+      padding-right:2.25rem;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
       background-repeat:no-repeat;
-      background-position: right 12px center; /* separa la flecha del borde */
+      background-position: right 12px center;
       background-size:14px;
     }
-    select::-ms-expand{ display:none; } /* IE/Edge heredado */
+    select::-ms-expand{ display:none; }
 
-    .btn-vino{ background:var(--vino); color:#fff; border:1px solid #5a0f2f; border-radius:4px; padding:8px 16px; font-weight:600; }
-    .btn-outline{ background:#fff; color:#444; border:1px solid #ccc; border-radius:4px; padding:8px 16px; }
+    /* Botones */
+    .btn-vino{
+      background:var(--vino);
+      color:#fff;
+      border:1px solid #5a0f2f;
+      border-radius:4px;
+      padding:8px 16px;
+      font-weight:600;
+    }
+    .btn-outline{
+      background:#fff;
+      color:#444;
+      border:1px solid #ccc;
+      border-radius:4px;
+      padding:8px 16px;
+    }
+
+    /* 🔧 Fix para mantener texto blanco en hover del botón "Siguiente" */
+    .btn-vino,
+    .btn-vino:link,
+    .btn-vino:visited,
+    .btn-vino:hover,
+    .btn-vino:focus,
+    .btn-vino:active {
+      color: #fff !important;
+      text-decoration: none;
+    }
+    .btn-vino:hover,
+    .btn-vino:focus {
+      background:#71203f;
+      border-color:#631a37;
+    }
 
     @media (max-width:992px){ .form-grid{ grid-template-columns:1fr 1fr; } }
     @media (max-width:640px){ .form-grid{ grid-template-columns:1fr; } }
@@ -134,7 +163,6 @@
       </div>
 
       <br>
-
       <p class="lbl-muted" style="margin-top:10px;"><strong>*</strong> Campos obligatorios</p>
 
     </div>
