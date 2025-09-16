@@ -14,25 +14,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      /* --gob-primary: var(--color-primario); */
-      --gob-primary:#611232; /* fallback actual */
-    }
+    :root{ --gob-primary:#611232; }
 
-    /* Tipografía unificada */
     body, h1,h2,h3,h4,h5,h6,p,a,li,label,input,select,button,th,td{
       font-family:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif !important;
     }
 
-    /* Breadcrumb */
     .breadcrumb{ background:transparent; padding-left:0; margin:12px 0 6px; }
     .breadcrumb > li + li:before{ color:#bbb; }
     .breadcrumb a{ text-decoration:underline; }
 
-    /* Título */
+    .link-like{
+      background:none; border:none; padding:0;
+      color:#2a5d2f; text-decoration:underline; cursor:pointer;
+      font:inherit;
+    }
+    .link-like:focus-visible{ outline:2px solid #444; outline-offset:2px; }
+
     .titulo-pagina{ color:#111; font-weight:700; margin:8px 0 14px; line-height:1.15; }
 
-    /* Stepper */
     .stepper{ display:flex; justify-content:center; gap:10px; margin:10px 0 22px; flex-wrap:wrap; }
     .step{
       display:flex; flex-direction:column; justify-content:center;
@@ -42,19 +42,12 @@
     }
     .step strong{ display:block; font-weight:700; }
     .step small{ display:block; color:#666; font-weight:500; margin-top:2px; }
-    .step.active{
-      background:var(--gob-primary);
-      border-color:var(--gob-primary);
-      color:#fff;
-    }
+    .step.active{ background:var(--gob-primary); border-color:var(--gob-primary); color:#fff; }
     .step.active small{ color:#fff; opacity:.95; }
 
-    /* Subtítulo + leyenda */
     h3.subtitulo{ margin:4px 0 0 !important; line-height:1.2; font-weight:700; color:#222; }
-    h3.subtitulo + .lbl-muted{ margin-top:0 !important; }
     .lbl-muted{ color:#666; margin:0 0 12px !important; line-height:1.45; }
 
-    /* ===== Tabla pago ===== */
     .tabla-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
     .tabla-pago{ width:100%; border-collapse:collapse; min-width:480px; }
     .tabla-pago th, .tabla-pago td{ padding:10px 8px; border-top:1px solid #e5e5e5; vertical-align:middle; }
@@ -62,7 +55,8 @@
     .importe{ width:220px; text-align:right; white-space:nowrap; }
     .input-mini{ width:140px; min-height:36px; border:1px solid #cfcfcf; padding:6px 10px; border-radius:3px; text-align:right; }
 
-    /* === Botones (comportamiento) === */
+    .totales{ text-align:right; }
+
     .btn, .btn:hover, .btn:focus, .btn:active{ text-decoration:none !important; }
     .btn{ min-height:40px; }
     .btn:focus-visible{ outline:2px solid #444; outline-offset:2px; box-shadow:none; }
@@ -70,27 +64,11 @@
     .btn.btn-primary:hover, .btn.btn-primary:focus, .btn.btn-primary:active{
       background-color:#4d0e29; border-color:#4d0e29; color:#fff !important;
     }
-    .btn.btn-primary:focus-visible{ outline-color:#fff; }
     .btn.btn-default{ font-weight:400; background:#fff; color:#444; border:1px solid #ccc; }
     .btn.btn-default:hover, .btn.btn-default:focus, .btn.btn-default:active{
       background:#fff; color:#444; border:1px solid #ccc; box-shadow:none;
     }
 
-    /* === FIX menú hamburguesa gris en móvil === */
-    .navbar-toggle .icon-bar{ background-color:#fff !important; }
-    .navbar-toggle,
-    .navbar-toggle:hover,
-    .navbar-toggle:focus,
-    .navbar-toggle:active{
-      background:transparent !important;
-      box-shadow:none !important;
-      border-color:transparent !important;
-    }
-    .navbar-toggle:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
-
-    .totales{ text-align:right; }
-
-    /* Responsivo */
     @media (max-width:768px){
       .step{ min-width:180px; }
       .btn{ width:100%; }
@@ -101,8 +79,21 @@
   <main class="page" role="main" style="margin-top:30px">
     <div class="container">
 
+      {{-- MENSAJES --}}
+      @if (session('wizard_error'))
+        <div class="alert alert-danger" role="alert">{{ session('wizard_error') }}</div>
+      @endif
+      @if (session('success'))
+        <div class="alert alert-success" role="alert">{{ session('success') }}</div>
+      @endif
+
       <ol class="breadcrumb" aria-label="miga de pan">
-        <li><a href="{{ route('inicio') }}">Inicio</a></li>
+        <li>
+          <form action="{{ route('pago.back') }}" method="POST" style="display:inline">
+            @csrf
+            <button type="submit" class="link-like">Información de la persona</button>
+          </form>
+        </li>
         <li class="active">Instituto Mexicano del Transporte</li>
       </ol>
 
@@ -138,7 +129,7 @@
             <tr>
               <td>Cantidad de trámites/servicios:</td>
               <td class="importe">
-                <input class="input-mini" type="number" value="1" min="1">
+                <input id="cantidadPublica" class="input-mini" type="number" value="1" min="1">
               </td>
             </tr>
             <tr>
@@ -153,12 +144,21 @@
         </table>
       </div>
 
+      {{-- Acciones: Atrás (POST) y Generar (POST) --}}
       <div class="row" style="margin-top:18px;">
         <div class="col-xs-6">
-          <a href="{{ route('informacion') }}" class="btn btn-default">Atrás</a>
+          <form action="{{ route('pago.back') }}" method="POST" style="display:inline">
+            @csrf
+            <button type="submit" class="btn btn-default">Atrás</button>
+          </form>
         </div>
         <div class="col-xs-6 text-right">
-          <a href="#" class="btn btn-primary">Generar línea de captura</a>
+          <form id="formGenerar" action="{{ route('pago.generar') }}" method="POST" style="display:inline">
+            @csrf
+            {{-- Campo oculto que recibe la cantidad del input visible --}}
+            <input type="hidden" name="cantidad" id="cantidadHidden" value="1">
+            <button type="submit" class="btn btn-primary">Generar línea de captura</button>
+          </form>
         </div>
       </div>
 
@@ -167,6 +167,18 @@
 
     </div>
   </main>
+
+  <script>
+    // Copia la cantidad visible al campo oculto antes de enviar
+    (function(){
+      var form = document.getElementById('formGenerar');
+      var src  = document.getElementById('cantidadPublica');
+      var dst  = document.getElementById('cantidadHidden');
+      form.addEventListener('submit', function(){
+        if(src && dst){ dst.value = src.value || 1; }
+      });
+    })();
+  </script>
 
   <script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>
 </body>

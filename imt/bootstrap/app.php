@@ -11,8 +11,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Alias de middlewares de ruta
+        $middleware->alias([
+            'wizard.nav'   => \App\Http\Middleware\EnsureWizardNav::class,
+            'wizard.step'  => \App\Http\Middleware\EnsureWizardStep::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();

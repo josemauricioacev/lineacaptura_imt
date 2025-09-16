@@ -14,10 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      /* --gob-primary: var(--color-primario); */ /* remapea si el CDN lo publica */
-      --gob-primary:#611232; /* fallback actual */
-    }
+    :root{ --gob-primary:#611232; }
 
     body, h1,h2,h3,h4,h5,h6,p,a,li,label,input,select,button,th,td{
       font-family:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif !important;
@@ -39,11 +36,7 @@
     }
     .step strong{ display:block; font-weight:700; }
     .step small{ display:block; color:#666; font-weight:500; margin-top:2px; }
-    .step.active{
-      background:var(--gob-primary);
-      border-color:var(--gob-primary);
-      color:#fff;
-    }
+    .step.active{ background:var(--gob-primary); border-color:var(--gob-primary); color:#fff; }
     .step.active small{ color:#fff; opacity:.95; }
 
     h3.subtitulo{ margin:4px 0 0 !important; line-height:1.2; font-weight:700; color:#222; }
@@ -74,13 +67,11 @@
     .btn.btn-primary:hover, .btn.btn-primary:focus, .btn.btn-primary:active{
       background-color:#4d0e29; border-color:#4d0e29; color:#fff !important;
     }
-    .btn.btn-primary:focus-visible{ outline-color:#fff; }
     .btn.btn-default{ font-weight:400; background:#fff; color:#444; border:1px solid #ccc; }
     .btn.btn-default:hover, .btn.btn-default:focus, .btn.btn-default:active{
       background:#fff; color:#444; border:1px solid #ccc; box-shadow:none;
     }
 
-    /* === FIX menú hamburguesa gris en móvil === */
     .navbar-toggle .icon-bar{ background-color:#fff !important; }
     .navbar-toggle,
     .navbar-toggle:hover,
@@ -91,6 +82,12 @@
       border-color:transparent !important;
     }
     .navbar-toggle:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+
+    .link-like{
+      background:none; border:none; padding:0;
+      color:#2a5d2f; text-decoration:underline; cursor:pointer;
+      font:inherit;
+    }
 
     @media (max-width:768px){
       .step{ min-width:180px; }
@@ -104,8 +101,15 @@
   <main class="page" role="main" style="margin-top:30px">
     <div class="container">
 
+      {{-- Quitamos banners grandes; usamos validación nativa en "Siguiente" --}}
+
       <ol class="breadcrumb">
-        <li><a href="{{ route('inicio') }}">Inicio</a></li>
+        <li>
+          <form id="form-back" action="{{ route('seleccion.back') }}" method="POST" style="display:inline">
+            @csrf
+            <button type="submit" class="link-like">Inicio</button>
+          </form>
+        </li>
         <li class="active">Instituto Mexicano del Transporte</li>
       </ol>
 
@@ -120,39 +124,45 @@
       <h3 class="subtitulo">Selección del trámite:</h3>
       <p class="lbl-muted">Identifique y seleccione el trámite y/o servicio.</p>
 
-      <div class="form-inline-imt">
-        <label for="tramite" class="sr-only">Selecciona un trámite</label>
-        <select id="tramite" name="tramite">
-          <option selected disabled>Selecciona un trámite</option>
-          <option value="1">Constancia de capacitación</option>
-          <option value="2">Renovación de licencia de operador</option>
-          <option value="3">Inscripción a curso de seguridad vial</option>
-        </select>
-      </div>
+      {{-- Formulario para avanzar (Siguiente) --}}
+      <form id="form-next" action="{{ route('seleccion.next') }}" method="POST">
+        @csrf
 
-      <div class="tabla-wrap">
-        <table class="tabla-imt">
-          <thead>
-            <tr>
-              <th>Descripción del concepto</th>
-              <th style="width:220px;">Importe en pesos M.N.</th>
-              <th style="width:160px;">Opciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>—</td><td>—</td><td>—</td></tr>
-          </tbody>
-        </table>
-      </div>
+        <div class="form-inline-imt">
+          <label for="tramite" class="sr-only">Selecciona un trámite</label>
+          <select id="tramite" name="tramite" required>
+            <option value="" disabled {{ old('tramite') ? '' : 'selected' }}>Selecciona un trámite</option>
+            <option value="1" {{ old('tramite')=='1' ? 'selected' : '' }}>Constancia de capacitación</option>
+            <option value="2" {{ old('tramite')=='2' ? 'selected' : '' }}>Renovación de licencia de operador</option>
+            <option value="3" {{ old('tramite')=='3' ? 'selected' : '' }}>Inscripción a curso de seguridad vial</option>
+          </select>
+        </div>
 
-      <div class="row" style="margin-top:16px;">
-        <div class="col-xs-6">
-          <a href="{{ route('inicio') }}" class="btn btn-default">Atrás</a>
+        <div class="tabla-wrap">
+          <table class="tabla-imt">
+            <thead>
+              <tr>
+                <th>Descripción del concepto</th>
+                <th style="width:220px;">Importe en pesos M.N.</th>
+                <th style="width:160px;">Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>—</td><td>—</td><td>—</td></tr>
+            </tbody>
+          </table>
         </div>
-        <div class="col-xs-6 text-right">
-          <a href="{{ route('informacion') }}" class="btn btn-primary">Siguiente</a>
+
+        <div class="row" style="margin-top:16px;">
+          <div class="col-xs-6">
+            {{-- Botón Atrás que ENVÍA su propio form (no el de Siguiente) --}}
+            <button type="submit" class="btn btn-default" form="form-back" formmethod="POST">← Atrás</button>
+          </div>
+          <div class="col-xs-6 text-right">
+            <button type="submit" class="btn btn-primary" form="form-next">Siguiente →</button>
+          </div>
         </div>
-      </div>
+      </form>
 
       <br>
       <p class="lbl-muted"><strong>*</strong> Campos obligatorios</p>

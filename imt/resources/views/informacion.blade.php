@@ -14,25 +14,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      /* --gob-primary: var(--color-primario); */
-      --gob-primary:#611232; /* fallback actual */
-    }
+    :root{ --gob-primary:#611232; }
 
-    /* Tipografía unificada */
     body, h1,h2,h3,h4,h5,h6,p,a,li,label,input,select,button,th,td{
       font-family:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif !important;
     }
 
-    /* Breadcrumb */
     .breadcrumb{ background:transparent; padding-left:0; margin:12px 0 6px; }
     .breadcrumb > li + li:before{ color:#bbb; }
     .breadcrumb a{ text-decoration:underline; }
 
-    /* Título */
+    .link-like{
+      background:none; border:none; padding:0;
+      color:#2a5d2f; text-decoration:underline; cursor:pointer;
+      font:inherit;
+    }
+    .link-like:focus-visible{ outline:2px solid #444; outline-offset:2px; }
+
     .titulo-pagina{ color:#111; font-weight:700; margin:8px 0 14px; line-height:1.15; }
 
-    /* Stepper */
     .stepper{ display:flex; justify-content:center; gap:10px; margin:10px 0 22px; flex-wrap:wrap; }
     .step{
       display:flex; flex-direction:column; justify-content:center;
@@ -40,63 +40,31 @@
       padding:12px 16px; border:1px solid #e5e5e5; border-radius:6px;
       background:#fff; color:#111; text-align:center;
     }
-    .step strong{ display:block; font-weight:700; }
-    .step small{ display:block; color:#666; font-weight:500; margin-top:2px; }
-    .step.active{
-      background:var(--gob-primary);
-      border-color:var(--gob-primary);
-      color:#fff;
-    }
-    .step.active small{ color:#fff; opacity:.95; }
+    .step.active{ background:var(--gob-primary); border-color:var(--gob-primary); color:#fff; }
 
-    /* Subtítulo + leyenda */
     h3.subtitulo{ margin:4px 0 0 !important; line-height:1.2; font-weight:700; color:#222; }
-    h3.subtitulo + .lbl-muted{ margin-top:0 !important; }
     .lbl-muted{ color:#666; margin:0 0 12px !important; line-height:1.45; }
 
-    /* Formulario */
     .form-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
     .form-grid label{ font-weight:600; color:#444; margin-bottom:6px; display:block; }
     .form-grid input, .form-grid select{
       width:100%; min-height:36px; border:1px solid #cfcfcf; padding:6px 10px; border-radius:3px;
     }
+    /* SOLO inputs en mayúsculas */
+    .form-grid input[type="text"]{ text-transform:uppercase; }
 
-    /* Flecha estética del select (incluye #tipoPersona) */
-    .form-grid select, #tipoPersona{
-      -webkit-appearance:none; -moz-appearance:none; appearance:none;
-      padding-right:2.25rem;
-      background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-      background-repeat:no-repeat; background-position:right 12px center; background-size:14px;
+    .form-help{
+      display:block; margin-top:6px; font-size:12px; color:#a94442; /* rojo suave */
     }
-    select::-ms-expand{ display:none; }
 
-    /* === Botones (comportamiento) === */
     .btn, .btn:hover, .btn:focus, .btn:active{ text-decoration:none !important; }
     .btn{ min-height:40px; }
     .btn:focus-visible{ outline:2px solid #444; outline-offset:2px; box-shadow:none; }
     .btn.btn-primary{ background-color:var(--gob-primary); color:#fff !important; border:1px solid var(--gob-primary); }
-    .btn.btn-primary:hover, .btn.btn-primary:focus, .btn.btn-primary:active{
-      background-color:#4d0e29; border-color:#4d0e29; color:#fff !important;
-    }
-    .btn.btn-primary:focus-visible{ outline-color:#fff; }
-    .btn.btn-default{ font-weight:400; background:#fff; color:#444; border:1px solid #ccc; }
-    .btn.btn-default:hover, .btn.btn-default:focus, .btn.btn-default:active{
-      background:#fff; color:#444; border:1px solid #ccc; box-shadow:none;
-    }
+    .btn.btn-primary:hover{ background-color:#4d0e29; }
+    .btn.btn-default{ background:#fff; color:#444; border:1px solid #ccc; }
+    .btn.btn-default:hover{ background:#f7f7f7; }
 
-    /* === FIX menú hamburguesa gris en móvil === */
-    .navbar-toggle .icon-bar{ background-color:#fff !important; }
-    .navbar-toggle,
-    .navbar-toggle:hover,
-    .navbar-toggle:focus,
-    .navbar-toggle:active{
-      background:transparent !important;
-      box-shadow:none !important;
-      border-color:transparent !important;
-    }
-    .navbar-toggle:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
-
-    /* Responsivo */
     @media (max-width:992px){ .form-grid{ grid-template-columns:1fr 1fr; } }
     @media (max-width:640px){ .form-grid{ grid-template-columns:1fr; } }
     @media (max-width:768px){
@@ -109,8 +77,15 @@
   <main class="page" role="main" style="margin-top:30px">
     <div class="container">
 
+      {{-- Sin banner general: mostramos errores pequeños por campo --}}
+
       <ol class="breadcrumb" aria-label="miga de pan">
-        <li><a href="{{ route('inicio') }}">Inicio</a></li>
+        <li>
+          <form id="form-back" action="{{ route('informacion.back') }}" method="POST" style="display:inline">
+            @csrf
+            <button type="submit" class="link-like">Selección del trámite</button>
+          </form>
+        </li>
         <li class="active">Instituto Mexicano del Transporte</li>
       </ol>
 
@@ -125,56 +100,99 @@
       <h3 class="subtitulo">Información de la persona</h3>
       <p class="lbl-muted">Proporcione los datos solicitados para la generación de su línea de captura.</p>
 
-      <div class="form-grid" role="form" aria-label="Formulario de datos personales">
-        <div style="grid-column:1 / span 3;">
-          <label for="tipoPersona">Seleccione:*</label>
-          <select id="tipoPersona" name="tipoPersona">
-            <option value="" selected disabled>Seleccione una opción</option>
-            <option>Persona Física</option>
-            <option>Persona Moral</option>
-          </select>
+      <form id="form-info" action="{{ route('informacion.next') }}" method="POST">
+        @csrf
+        <div class="form-grid" role="form" aria-label="Formulario de datos personales">
+          {{-- Tipo de persona --}}
+          <div style="grid-column:1 / span 3;">
+            <label for="tipoPersona">Seleccione:</label>
+            <select id="tipoPersona" name="tipoPersona" required aria-describedby="tipoPersonaHelp">
+              <option value="" disabled {{ old('tipoPersona') ? '' : 'selected' }}>Seleccione una opción</option>
+              <option value="Persona Física" {{ old('tipoPersona')==='Persona Física' ? 'selected' : '' }}>Persona Física</option>
+              <option value="Persona Moral"  {{ old('tipoPersona')==='Persona Moral'  ? 'selected' : '' }}>Persona Moral</option>
+            </select>
+            @error('tipoPersona')
+              <small id="tipoPersonaHelp" class="form-help">{{ $message }}</small>
+            @enderror
+          </div>
+
+          {{-- CURP --}}
+          <div>
+            <label for="curp">CURP:</label>
+            <input id="curp" name="curp" type="text" maxlength="18"
+                   value="{{ old('curp') }}"
+                   pattern="^[A-Z][AEIOUX][A-Z]{2}\d{6}[HM][A-Z]{5}[A-Z0-9]\d$"
+                   title="CURP de 18 caracteres (formato oficial)">
+            @error('curp')
+              <small class="form-help">{{ $message }}</small>
+            @enderror
+          </div>
+
+          {{-- RFC --}}
+          <div>
+            <label for="rfc">RFC:*</label>
+            <input id="rfc" name="rfc" type="text" required maxlength="13"
+                   value="{{ old('rfc') }}"
+                   pattern="^[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}$"
+                   title="RFC con formato válido (12 o 13 caracteres, con fecha y homoclave)">
+            @error('rfc')
+              <small class="form-help">{{ $message }}</small>
+            @enderror
+          </div>
+
+          {{-- Nombres --}}
+          <div>
+            <label for="nombres">Nombre(s):*</label>
+            <input id="nombres" name="nombres" type="text" required
+                   value="{{ old('nombres') }}" title="Ingrese su nombre">
+            @error('nombres')
+              <small class="form-help">{{ $message }}</small>
+            @enderror
+          </div>
+
+          {{-- Apellido 1 --}}
+          <div>
+            <label for="ap1">Primer apellido:*</label>
+            <input id="ap1" name="ap1" type="text" required
+                   value="{{ old('ap1') }}" title="Ingrese su primer apellido">
+            @error('ap1')
+              <small class="form-help">{{ $message }}</small>
+            @enderror
+          </div>
+
+          {{-- Apellido 2 --}}
+          <div>
+            <label for="ap2">Segundo apellido:</label>
+            <input id="ap2" name="ap2" type="text" value="{{ old('ap2') }}">
+            @error('ap2')
+              <small class="form-help">{{ $message }}</small>
+            @enderror
+          </div>
         </div>
 
-        <div>
-          <label for="curp">CURP:*</label>
-          <input id="curp" name="curp" placeholder="">
+        <div class="row" style="margin-top:16px;">
+          <div class="col-xs-6">
+            {{-- Botón que envía el form de atrás (no anidar forms) --}}
+            <button type="submit" class="btn btn-default" form="form-back" formmethod="POST">← Atrás</button>
+          </div>
+          <div class="col-xs-6 text-right">
+            <button type="submit" class="btn btn-primary">Siguiente →</button>
+          </div>
         </div>
-
-        <div>
-          <label for="rfc">RFC:*</label>
-          <input id="rfc" name="rfc" placeholder="">
-        </div>
-
-        <div>
-          <label for="nombres">Nombre(s):*</label>
-          <input id="nombres" name="nombres" placeholder="">
-        </div>
-
-        <div>
-          <label for="ap1">Primer apellido:*</label>
-          <input id="ap1" name="ap1" placeholder="">
-        </div>
-
-        <div>
-          <label for="ap2">Segundo apellido:</label>
-          <input id="ap2" name="ap2" placeholder="">
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:16px;">
-        <div class="col-xs-6">
-          <a href="{{ route('seleccion') }}" class="btn btn-default">Atrás</a>
-        </div>
-        <div class="col-xs-6 text-right">
-          <a href="{{ route('pago') }}" class="btn btn-primary">Siguiente</a>
-        </div>
-      </div>
+      </form>
 
       <br>
       <p class="lbl-muted" style="margin-top:10px;"><strong>*</strong> Campos obligatorios</p>
 
     </div>
   </main>
+
+  <script>
+    // Mayúsculas SOLO en inputs de texto
+    document.querySelectorAll('input[type="text"]').forEach(el => {
+      el.addEventListener('input', () => { el.value = el.value.toUpperCase(); });
+    });
+  </script>
 
   <script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>
 </body>
