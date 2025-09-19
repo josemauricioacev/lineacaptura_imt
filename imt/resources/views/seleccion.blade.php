@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Selección de trámite | PAGA IMT</title>
+  <title>Selección de trámite</title>
 
   <!-- CDN gob.mx -->
   <link rel="stylesheet" href="https://framework-gb.cdn.gob.mx/assets/styles/main.css">
@@ -17,7 +17,7 @@
     :root{ --gob-primary:#611232; }
 
     body, h1,h2,h3,h4,h5,h6,p,a,li,label,input,select,button,th,td{
-      font-family:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif !important;
+      font-family:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif!important;
     }
 
     .breadcrumb{ background:transparent; padding-left:0; margin:12px 0 6px; }
@@ -39,9 +39,9 @@
     .step.active{ background:var(--gob-primary); border-color:var(--gob-primary); color:#fff; }
     .step.active small{ color:#fff; opacity:.95; }
 
-    h3.subtitulo{ margin:4px 0 0 !important; line-height:1.2; font-weight:700; color:#222; }
-    h3.subtitulo + .lbl-muted{ margin-top:0 !important; }
-    .lbl-muted{ color:#666; margin:0 0 12px !important; line-height:1.45; }
+    h3.subtitulo{ margin:4px 0 0!important; line-height:1.2; font-weight:700; color:#222; }
+    h3.subtitulo + .lbl-muted{ margin-top:0!important; }
+    .lbl-muted{ color:#666; margin:0 0 12px!important; line-height:1.45; }
 
     .form-inline-imt{ display:flex; gap:10px; align-items:center; margin:10px 0 16px; }
     .form-inline-imt select{
@@ -59,27 +59,22 @@
     .tabla-imt thead th{ color:#444; font-weight:600; border-bottom:2px solid #e5e5e5; padding:10px 8px; }
     .tabla-imt tbody td{ border-top:1px solid #e5e5e5; padding:10px 8px; vertical-align:middle; }
 
-    /* === Botones === */
-    .btn, .btn:hover, .btn:focus, .btn:active{ text-decoration:none !important; }
+    /* Botones */
+    .btn,.btn:hover,.btn:focus,.btn:active{ text-decoration:none!important; }
     .btn{ min-height:40px; }
     .btn:focus-visible{ outline:2px solid #444; outline-offset:2px; box-shadow:none; }
-    .btn.btn-primary{ background-color:var(--gob-primary); color:#fff !important; border:1px solid var(--gob-primary); }
-    .btn.btn-primary:hover, .btn.btn-primary:focus, .btn.btn-primary:active{
-      background-color:#4d0e29; border-color:#4d0e29; color:#fff !important;
+    .btn.btn-primary{ background-color:var(--gob-primary); color:#fff!important; border:1px solid var(--gob-primary); }
+    .btn.btn-primary:hover,.btn.btn-primary:focus,.btn.btn-primary:active{
+      background-color:#4d0e29; border-color:#4d0e29; color:#fff!important;
     }
-    .btn.btn-default{ font-weight:400; background:#fff; color:#444; border:1px solid #ccc; }
-    .btn.btn-default:hover, .btn.btn-default:focus, .btn.btn-default:active{
-      background:#fff; color:#444; border:1px solid #ccc; box-shadow:none;
+    .btn.btn-default{ font-weight:400; background:#fff; color:#444!important; border:1px solid #ccc; }
+    .btn.btn-default:hover,.btn.btn-default:focus,.btn.btn-default:active{
+      background:#fff; color:#444!important; border:1px solid #ccc; box-shadow:none;
     }
 
-    .navbar-toggle .icon-bar{ background-color:#fff !important; }
-    .navbar-toggle,
-    .navbar-toggle:hover,
-    .navbar-toggle:focus,
-    .navbar-toggle:active{
-      background:transparent !important;
-      box-shadow:none !important;
-      border-color:transparent !important;
+    .navbar-toggle .icon-bar{ background-color:#fff!important; }
+    .navbar-toggle,.navbar-toggle:hover,.navbar-toggle:focus,.navbar-toggle:active{
+      background:transparent!important; box-shadow:none!important; border-color:transparent!important;
     }
     .navbar-toggle:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
 
@@ -88,6 +83,10 @@
       color:#2a5d2f; text-decoration:underline; cursor:pointer;
       font:inherit;
     }
+
+    /* Ayudas de error */
+    .form-help{ display:none; margin-top:6px; font-size:12px; color:#a94442; }
+    .is-invalid{ border-color:#a94442!important; }
 
     @media (max-width:768px){
       .step{ min-width:180px; }
@@ -98,78 +97,112 @@
 </head>
 <body>
 
-  <main class="page" role="main" style="margin-top:30px">
-    <div class="container">
+<main class="page" role="main" style="margin-top:30px">
+  <div class="container">
 
-      {{-- Quitamos banners grandes; usamos validación nativa en "Siguiente" --}}
+    <ol class="breadcrumb">
+      <li>
+        <form id="form-back" action="{{ route('seleccion.back') }}" method="POST" style="display:inline">
+          @csrf
+          <button type="submit" class="link-like">Inicio</button>
+        </form>
+      </li>
+      <li class="active">Instituto Mexicano del Transporte</li>
+    </ol>
 
-      <ol class="breadcrumb">
-        <li>
-          <form id="form-back" action="{{ route('seleccion.back') }}" method="POST" style="display:inline">
-            @csrf
-            <button type="submit" class="link-like">Inicio</button>
-          </form>
-        </li>
-        <li class="active">Instituto Mexicano del Transporte</li>
-      </ol>
+    <center><h1 class="titulo-pagina">Instituto Mexicano del Transporte</h1></center>
 
-      <center><h1 class="titulo-pagina">Instituto Mexicano del Transporte</h1></center>
+    <div class="stepper">
+      <div class="step active" aria-current="step"><strong>Paso 1</strong><small>Selección del trámite</small></div>
+      <div class="step"><strong>Paso 2</strong><small>Información de la persona</small></div>
+      <div class="step"><strong>Paso 3</strong><small>Formato de pago</small></div>
+    </div>
 
-      <div class="stepper">
-        <div class="step active" aria-current="step"><strong>Paso 1</strong><small>Selección del trámite</small></div>
-        <div class="step"><strong>Paso 2</strong><small>Información de la persona</small></div>
-        <div class="step"><strong>Paso 3</strong><small>Formato de pago</small></div>
+    <h3 class="subtitulo">Selección del trámite:</h3>
+    <p class="lbl-muted">Identifique y seleccione el trámite y/o servicio.</p>
+
+    {{-- Formulario para avanzar --}}
+    <form id="form-next" action="{{ route('seleccion.next') }}" method="POST" novalidate>
+      @csrf
+
+      <div class="form-inline-imt">
+        <label for="tramite" class="sr-only">Selecciona un trámite</label>
+        <select id="tramite" name="tramite" required aria-describedby="tramiteHelp">
+          <option value="" disabled {{ old('tramite') ? '' : 'selected' }}>Selecciona un trámite</option>
+          <option value="1" {{ old('tramite')=='1' ? 'selected' : '' }}>Constancia de capacitación</option>
+          <option value="2" {{ old('tramite')=='2' ? 'selected' : '' }}>Renovación de licencia de operador</option>
+          <option value="3" {{ old('tramite')=='3' ? 'selected' : '' }}>Inscripción a curso de seguridad vial</option>
+        </select>
+      </div>
+      <small id="tramiteHelp" class="form-help">Seleccione un trámite para continuar.</small>
+      @error('tramite') <small class="form-help" style="display:block">{{ $message }}</small> @enderror
+
+      <div class="tabla-wrap">
+        <table class="tabla-imt">
+          <thead>
+            <tr>
+              <th>Descripción del concepto</th>
+              <th style="width:220px;">Importe en pesos M.N.</th>
+              <th style="width:160px;">Opciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>—</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
       </div>
 
-      <h3 class="subtitulo">Selección del trámite:</h3>
-      <p class="lbl-muted">Identifique y seleccione el trámite y/o servicio.</p>
-
-      {{-- Formulario para avanzar (Siguiente) --}}
-      <form id="form-next" action="{{ route('seleccion.next') }}" method="POST">
-        @csrf
-
-        <div class="form-inline-imt">
-          <label for="tramite" class="sr-only">Selecciona un trámite</label>
-          <select id="tramite" name="tramite" required>
-            <option value="" disabled {{ old('tramite') ? '' : 'selected' }}>Selecciona un trámite</option>
-            <option value="1" {{ old('tramite')=='1' ? 'selected' : '' }}>Constancia de capacitación</option>
-            <option value="2" {{ old('tramite')=='2' ? 'selected' : '' }}>Renovación de licencia de operador</option>
-            <option value="3" {{ old('tramite')=='3' ? 'selected' : '' }}>Inscripción a curso de seguridad vial</option>
-          </select>
+      <div class="row" style="margin-top:16px;">
+        <div class="col-xs-6">
+          {{-- Botón Atrás envía su propio form --}}
+          <button type="submit" class="btn btn-default" form="form-back" formmethod="POST">Atrás</button>
         </div>
-
-        <div class="tabla-wrap">
-          <table class="tabla-imt">
-            <thead>
-              <tr>
-                <th>Descripción del concepto</th>
-                <th style="width:220px;">Importe en pesos M.N.</th>
-                <th style="width:160px;">Opciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>—</td><td>—</td><td>—</td></tr>
-            </tbody>
-          </table>
+        <div class="col-xs-6 text-right">
+          <button id="btnNext" type="submit" class="btn btn-primary">Siguiente</button>
         </div>
+      </div>
+    </form>
 
-        <div class="row" style="margin-top:16px;">
-          <div class="col-xs-6">
-            {{-- Botón Atrás que ENVÍA su propio form (no el de Siguiente) --}}
-            <button type="submit" class="btn btn-default" form="form-back" formmethod="POST">← Atrás</button>
-          </div>
-          <div class="col-xs-6 text-right">
-            <button type="submit" class="btn btn-primary" form="form-next">Siguiente →</button>
-          </div>
-        </div>
-      </form>
+    <br>
+    <p class="lbl-muted"><strong>*</strong> Campos obligatorios</p>
 
-      <br>
-      <p class="lbl-muted"><strong>*</strong> Campos obligatorios</p>
+  </div>
+</main>
 
-    </div>
-  </main>
+<script>
+  // Referencias
+  const form = document.getElementById('form-next');
+  const tramite = document.getElementById('tramite');
+  const tramiteHelp = document.getElementById('tramiteHelp');
 
-  <script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>
+  // Muestra/oculta error breve
+  function setErrorSelect(show, msg){
+    tramite.classList.toggle('is-invalid', !!show);
+    tramite.setAttribute('aria-invalid', !!show);
+    if(msg) tramiteHelp.textContent = msg;
+    tramiteHelp.style.display = show ? 'block' : 'none';
+  }
+
+  // Validación al enviar: si no hay selección, no envía y muestra mensaje
+  form.addEventListener('submit', function(e){
+    const ok = !!tramite.value;
+    if(!ok){
+      e.preventDefault();
+      setErrorSelect(true, 'Seleccione un trámite para continuar.');
+      tramite.focus();
+    }else{
+      setErrorSelect(false, '');
+    }
+  });
+
+  // Si el usuario selecciona algo, limpiar error
+  tramite.addEventListener('change', function(){
+    if(tramite.value){
+      setErrorSelect(false, '');
+    }
+  });
+</script>
+
+<script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>
 </body>
 </html>

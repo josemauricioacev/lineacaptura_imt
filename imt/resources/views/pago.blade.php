@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Formato de pago | PAGA IMT</title>
+  <title>Formato de pago</title>
 
   <!-- CDN gob.mx -->
   <link rel="stylesheet" href="https://framework-gb.cdn.gob.mx/assets/styles/main.css">

@@ -64,47 +64,108 @@ class WizardController extends Controller
     // POST /informacion/next -> valida y pasa a /pago
     public function informacionNext(Request $request)
     {
-        $data = $request->validate([
-            'tipoPersona' => 'required|in:Persona Física,Persona Moral',
-            'curp'        => ['nullable','string','max:18','regex:/^[A-Z][AEIOUX][A-Z]{2}\d{6}[HM][A-Z]{5}[A-Z0-9]\d$/i'],
-            'rfc'         => ['required','string','max:13','regex:/^([A-Z&Ñ]{3,4})\d{6}[A-Z0-9]{3}$/i'],
-            'nombres'     => 'required|string|max:120',
-            'ap1'         => 'required|string|max:120',
-            'ap2'         => 'nullable|string|max:120',
-        ], [
+        $tipo = $request->input('tipoPersona');
+
+        $messages = [
             'tipoPersona.required' => 'Selecciona un tipo de persona.',
             'tipoPersona.in'       => 'El tipo de persona no es válido.',
+
+            'curp.required'        => 'La CURP es obligatoria.',
             'curp.regex'           => 'La CURP no tiene un formato válido.',
+
             'rfc.required'         => 'El RFC es obligatorio.',
-            'rfc.regex'            => 'El RFC no tiene un formato válido.',
+            'rfc.regex'            => 'El RFC no tiene un formato válido para el tipo seleccionado.',
+
             'nombres.required'     => 'El nombre es obligatorio.',
             'ap1.required'         => 'El primer apellido es obligatorio.',
-        ]);
+
+            'razon.required'       => 'La razón social es obligatoria.',
+        ];
+
+        // Base
+        $base = ['tipoPersona' => 'required|in:Persona Física,Persona Moral'];
+
+        // Reglas condicionales según el tipo
+        if ($tipo === 'Persona Moral') {
+            $rules = $base + [
+                // PM
+                'razon' => 'required|string|max:255',
+                'rfc'   => ['required','string','regex:/^[A-ZÑ&]{3}\d{6}[A-Z0-9]{3}$/i'], // 3 letras + YYMMDD + 3
+
+                // Campos PF como no obligatorios para no bloquear si llegan
+                'curp'    => 'nullable|string|max:18',
+                'nombres' => 'nullable|string|max:120',
+                'ap1'     => 'nullable|string|max:120',
+                'ap2'     => 'nullable|string|max:120',
+            ];
+        } else {
+            // Default: Persona Física
+            $rules = $base + [
+                // PF
+                'curp'    => ['required','string','max:18','regex:/^([A-Z][AEIOUX][A-Z]{2})(\d{2})(\d{2})(\d{2})([HM])(AS|BC|BS|CC|CL|CM|CS|CH|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TL|TS|VZ|YN|ZS|NE)([B-DF-HJ-NP-TV-Z]{3})([A-Z0-9])(\d)$/i'],
+                'rfc'     => ['required','string','regex:/^[A-ZÑ&]{4}\d{6}[A-Z0-9]{3}$/i'], // 4 letras + YYMMDD + 3
+                'nombres' => 'required|string|max:120',
+                'ap1'     => 'required|string|max:120',
+                'ap2'     => 'nullable|string|max:120',
+
+                // Campo PM no requerido
+                'razon'   => 'nullable|string|max:255',
+            ];
+        }
+
+        $data = $request->validate($rules, $messages);
 
         // Normaliza RFC y CURP
-        $data['rfc'] = mb_strtoupper(trim($data['rfc']), 'UTF-8');
+        if (!empty($data['rfc'])) {
+            $data['rfc'] = mb_strtoupper(trim($data['rfc']), 'UTF-8');
+        }
         if (!empty($data['curp'])) {
             $data['curp'] = mb_strtoupper(trim($data['curp']), 'UTF-8');
         }
-
-        // Valida coherencia RFC con tipoPersona
-        $letras = strspn($data['rfc'], 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ&');
-        if ($data['tipoPersona'] === 'Persona Física' && $letras !== 4) {
-            return back()->withErrors(['rfc' => 'El RFC no corresponde a una Persona Física'])->withInput();
-        }
-        if ($data['tipoPersona'] === 'Persona Moral' && $letras !== 3) {
-            return back()->withErrors(['rfc' => 'El RFC no corresponde a una Persona Moral'])->withInput();
+        if (!empty($data['razon'])) {
+            $data['razon'] = mb_strtoupper(trim($data['razon']), 'UTF-8');
         }
 
-        // Guarda en sesión
-        $request->session()->put('wizard.data.persona', [
-            'tipoPersona' => $data['tipoPersona'],
-            'rfc'         => $data['rfc'],
-            'curp'        => $data['curp'] ?? null,
-            'nombres'     => $data['nombres'],
-            'ap1'         => $data['ap1'],
-            'ap2'         => $data['ap2'] ?? null,
-        ]);
+        // Chequeo adicional (coherencia de letras iniciales). No es estrictamente necesario
+        // si los regex de arriba están, pero mantiene el mensaje específico.
+        if (!empty($data['rfc'])) {
+            $letras = strspn($data['rfc'], 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ&');
+            if ($tipo === 'Persona Física' && $letras !== 4) {
+                return back()
+                    ->withErrors(['rfc' => 'El RFC no corresponde a una Persona Física'])
+                    ->withInput();
+            }
+            if ($tipo === 'Persona Moral' && $letras !== 3) {
+                return back()
+                    ->withErrors(['rfc' => 'El RFC no corresponde a una Persona Moral'])
+                    ->withInput();
+            }
+        }
+
+        // Guarda en sesión solo lo que corresponde a cada tipo
+        if ($tipo === 'Persona Moral') {
+            $request->session()->put('wizard.data.persona', [
+                'tipoPersona' => 'Persona Moral',
+                'rfc'         => $data['rfc'] ?? null,
+                'razon'       => $data['razon'] ?? null,
+                // Campos PF en null
+                'curp'        => null,
+                'nombres'     => null,
+                'ap1'         => null,
+                'ap2'         => null,
+            ]);
+        } else {
+            $request->session()->put('wizard.data.persona', [
+                'tipoPersona' => 'Persona Física',
+                'rfc'         => $data['rfc'] ?? null,
+                'curp'        => $data['curp'] ?? null,
+                'nombres'     => $data['nombres'] ?? null,
+                'ap1'         => $data['ap1'] ?? null,
+                'ap2'         => $data['ap2'] ?? null,
+                // Campo PM en null
+                'razon'       => null,
+            ]);
+        }
 
         $request->session()->put('wizard.current_step', 3);
 
