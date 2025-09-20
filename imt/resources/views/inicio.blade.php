@@ -156,8 +156,11 @@
 
           <div id="collapse-sict" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-sict">
             <div class="panel-body">
+              {{-- Al hacer clic, enviamos los valores fijos 155 / 001 para guardarlos en sesión --}}
               <form action="{{ route('inicio.next') }}" method="POST" style="display:inline">
                 @csrf
+                <input type="hidden" name="cve_dependencia" value="155">
+                <input type="hidden" name="unidad_administrativa" value="001">
                 <button type="submit" class="link-like" aria-label="Ir a Instituto Mexicano del Transporte">
                   Instituto Mexicano del Transporte
                 </button>
@@ -165,7 +168,15 @@
             </div>
           </div>
         </div>
+
+        {{-- Puedes agregar aquí más panels si se suman otras UAs o dependencias --}}
+        {{-- <div class="panel panel-default"> ... </div> --}}
       </div>
+
+      {{-- Pie/nota opcional --}}
+      <p style="margin-top:20px; color:#666; font-size:13px;">
+        Selecciona la dependencia para iniciar el trámite de pago y generación de línea de captura.
+      </p>
 
     </div>
   </main>
