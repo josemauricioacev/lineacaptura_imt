@@ -35,7 +35,6 @@
     }
     .form-grid input[type="text"]{ text-transform:uppercase; }
 
-    /* Flecha y espacio extra para selects (como en seleccion.blade.php) */
     .form-grid select{
       -webkit-appearance:none; -moz-appearance:none; appearance:none;
       padding-right:2.25rem;
@@ -99,8 +98,8 @@
           <label for="tipoPersona">Seleccione tipo de persona:</label>
           <select id="tipoPersona" name="tipoPersona" required aria-describedby="tipoPersonaHelp">
             <option value="" disabled {{ old('tipoPersona') ? '' : 'selected' }}>Seleccione una opción</option>
-            <option value="Persona Física" {{ old('tipoPersona')==='Persona Física' ? 'selected' : '' }}>Persona Física</option>
-            <option value="Persona Moral"  {{ old('tipoPersona')==='Persona Moral'  ? 'selected' : '' }}>Persona Moral</option>
+            <option value="FISICA" {{ old('tipoPersona')==='FISICA' ? 'selected' : '' }}>Persona Física</option>
+            <option value="MORAL"  {{ old('tipoPersona')==='MORAL'  ? 'selected' : '' }}>Persona Moral</option>
           </select>
           <small id="tipoPersonaHelp" class="form-help">Seleccione el tipo de persona.</small>
           @error('tipoPersona') <small class="form-help" style="display:block">{{ $message }}</small> @enderror
@@ -157,7 +156,6 @@
           <small id="razonHelp" class="form-help">Ingrese la razón social.</small>
           @error('razon') <small class="form-help" style="display:block">{{ $message }}</small> @enderror
         </div>
-
       </div>
 
       <div class="row" style="margin-top:16px;">
@@ -181,7 +179,6 @@
     el.addEventListener('input',()=>{ el.value = el.value.toUpperCase(); });
   });
 
-  // Refs
   const form = document.getElementById('form-info');
   const tipoPersona = document.getElementById('tipoPersona');
   const curp = document.getElementById('curp');
@@ -195,7 +192,6 @@
   const wrapPM = document.querySelectorAll('[data-pm]');
   const wrapCommon = document.querySelectorAll('[data-common]');
 
-  // Estado UX
   const touched = { tipoPersona:false, curp:false, rfc:false, nombres:false, ap1:false, ap2:false, razon:false };
   let attemptedSubmit = false;
   [tipoPersona, curp, rfc, nombres, ap1, ap2, razon].forEach(el=>{
@@ -205,7 +201,6 @@
     });
   });
 
-  // Helpers de error
   function setError(input, helpEl, show, msg){
     if(!input || !helpEl) return;
     input.classList.toggle('is-invalid', !!show);
@@ -215,7 +210,6 @@
   }
   function shouldShow(id){ return attemptedSubmit || touched[id]; }
 
-  // Fecha YYMMDD válida
   function validFechaYYMMDD(str){
     if(!/^\d{6}$/.test(str)) return false;
     const yy = parseInt(str.slice(0,2),10);
@@ -227,7 +221,6 @@
     return dd>=1 && dd<=diasMes[mm-1];
   }
 
-  // CURP válida
   const ENTIDADES = new Set(['AS','BC','BS','CC','CL','CM','CS','CH','DF','DG','GT','GR','HG','JC','MC','MN','MS','NT','NL','OC','PL','QT','QR','SP','SL','SR','TC','TL','TS','VZ','YN','ZS','NE']);
   function curpValida(c){
     if(!c) return false;
@@ -241,15 +234,14 @@
     return true;
   }
 
-  // RFC por tipo
   function rfcValidoPorTipo(r, tipo){
     if(!r) return false;
     r = r.trim().toUpperCase();
-    if(tipo === 'Persona Física'){
+    if(tipo === 'FISICA'){
       const m = r.match(/^([A-ZÑ&]{4})(\d{2})(\d{2})(\d{2})([A-Z0-9]{3})$/);
       if(!m) return false;
       return validFechaYYMMDD(m[2]+m[3]+m[4]);
-    }else if(tipo === 'Persona Moral'){
+    }else if(tipo === 'MORAL'){
       const m = r.match(/^([A-ZÑ&]{3})(\d{2})(\d{2})(\d{2})([A-Z0-9]{3})$/);
       if(!m) return false;
       return validFechaYYMMDD(m[2]+m[3]+m[4]);
@@ -271,10 +263,9 @@
 
   function updateUIByTipo(){
     const value = tipoPersona.value;
-    const pf = value === 'Persona Física';
-    const pm = value === 'Persona Moral';
+    const pf = value === 'FISICA';
+    const pm = value === 'MORAL';
 
-    // Si no hay selección, ocultar TODO menos el select y limpiar requeridos
     if(!pf && !pm){
       hideGroup(wrapPF, true);
       hideGroup(wrapPM, true);
@@ -290,7 +281,6 @@
       return;
     }
 
-    // Mostrar RFC común y el grupo correspondiente
     hideGroup(wrapCommon, false);
     if(pf){
       hideGroup(wrapPF, false);
@@ -306,7 +296,7 @@
       rfc.setAttribute('maxlength','13');
       rfc.setAttribute('title','RFC de persona física: 13 caracteres (LLLL + YYMMDD + 3)');
       document.getElementById('rfcHelp').textContent = 'RFC de persona física: 13 caracteres (LLLL + YYMMDD + 3).';
-    }else{ // PM
+    }else{
       hideGroup(wrapPF, true);
       hideGroup(wrapPM, false);
 
@@ -323,22 +313,18 @@
     }
   }
 
-  // Validación integral
   function validateAll(){
     let ok = true;
-
     const tipoOk = !!tipoPersona.value;
     setError(tipoPersona, document.getElementById('tipoPersonaHelp'),
       shouldShow('tipoPersona') && !tipoOk, 'Seleccione el tipo de persona.');
     ok = ok && tipoOk;
 
-    // Si no hay tipo seleccionado, no dispare más validaciones
     if(!tipoOk) return false;
 
-    const pf = tipoPersona.value === 'Persona Física';
-    const pm = tipoPersona.value === 'Persona Moral';
+    const pf = tipoPersona.value === 'FISICA';
+    const pm = tipoPersona.value === 'MORAL';
 
-    // RFC (solo si hay tipo)
     const rfcOk = rfcValidoPorTipo(rfc.value, tipoPersona.value);
     setError(rfc, document.getElementById('rfcHelp'),
       shouldShow('rfc') && !rfcOk,
@@ -367,13 +353,12 @@
       setError(curp, document.getElementById('curpHelp'),
         shouldShow('curp') && !curpOk, 'CURP inválida (revise estructura y fecha).');
       ok = ok && curpOk;
-    }else{ // PM
+    }else{
       const razonOk = (razon?.value || '').trim().length>0;
       setError(razon, document.getElementById('razonHelp'),
         shouldShow('razon') && !razonOk, 'Ingrese la razón social.');
       ok = ok && razonOk;
 
-      // Asegurar que ayudas PF no se muestren
       setError(curp, document.getElementById('curpHelp'), false);
       setError(nombres, document.getElementById('nombresHelp'), false);
       setError(ap1, document.getElementById('ap1Help'), false);
@@ -392,7 +377,6 @@
     }
   });
 
-  // Eventos
   tipoPersona.addEventListener('change', ()=>{
     updateUIByTipo();
     if(attemptedSubmit) validateAll();
@@ -402,7 +386,6 @@
     el.addEventListener('input', ()=>{ if(attemptedSubmit) validateAll(); });
   });
 
-  // Estado inicial: oculta todo salvo el select, a menos que haya old('tipoPersona')
   updateUIByTipo();
 </script>
 

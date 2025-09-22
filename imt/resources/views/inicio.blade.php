@@ -8,7 +8,7 @@
 
   <title>Instituto Mexicano del Transporte</title>
 
-  <!-- Estilos oficiales gob.mx (cambia solo este link por sexenio) -->
+  <!-- Estilos oficiales gob.mx -->
   <link rel="stylesheet" href="https://framework-gb.cdn.gob.mx/assets/styles/main.css">
 
   <!-- Fuente Montserrat -->
@@ -17,8 +17,7 @@
 
   <style>
     :root{
-      /* --gob-primary: var(--color-primario); */ /* remapea si el CDN lo publica */
-      --gob-primary:#611232; /* fallback actual */
+      --gob-primary:#611232;
       --gris:#98989A;
       --negro:#111111;
       --blanco:#ffffff;
@@ -26,12 +25,10 @@
       --dorado:#a57f2c;
     }
 
-    /* Tipografía unificada */
     body, h1, h2, h3, h4, h5, h6, p, a, li, label, input, select, button, th, td{
       font-family:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif !important;
     }
 
-    /* ====== Encabezado visual del contenido ====== */
     .banner-logos{
       display:flex; align-items:center; justify-content:space-between;
       gap:16px; margin:10px 0 0;
@@ -44,7 +41,6 @@
       .banner-logos .right{ order:2; }
     }
 
-    /* ====== Título principal ====== */
     .titulo-bienvenida{
       margin:22px 0 12px;
       color: var(--negro);
@@ -65,7 +61,6 @@
       width:100%;
     }
 
-    /* ====== Acordeón compacto y accesible ====== */
     .acordeon .panel{
       border:1px solid var(--borde); border-radius:4px; box-shadow:none;
     }
@@ -83,7 +78,6 @@
     }
     .acordeon .panel-body{ background:#fff; padding:14px 18px; }
 
-    /* Botón circular + / − (solo CSS; cambia con aria-expanded) */
     .toggle-indicator{
       position:relative; width:28px; height:28px; border-radius:50%;
       border:2px solid #bbb; background:#fff; cursor:pointer; flex:0 0 28px;
@@ -92,11 +86,10 @@
       content:""; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
       background:#777;
     }
-    .toggle-indicator::before{ width:14px; height:2px; }  /* “−” horizontal */
-    .toggle-indicator::after { width:2px;  height:14px; } /* “|” vertical (para “+”) */
+    .toggle-indicator::before{ width:14px; height:2px; }
+    .toggle-indicator::after { width:2px;  height:14px; }
     .heading-toggle[aria-expanded="true"] .toggle-indicator::after{ opacity:0; }
 
-    /* ====== Utilidades de botones ====== */
     .btn, .btn:hover, .btn:focus, .btn:active{ text-decoration:none !important; }
     .btn{ min-height:40px; }
     .btn:focus-visible{ outline:2px solid #444; outline-offset:2px; box-shadow:none; }
@@ -105,7 +98,6 @@
       background-color:#4d0e29; border-color:#4d0e29; color:#fff !important;
     }
 
-    /* Botón que luce como enlace (para el POST) */
     .link-like{
       background:none; border:none; padding:0;
       color:#2a5d2f; text-decoration:underline; cursor:pointer;
@@ -116,72 +108,79 @@
 </head>
 <body>
 
-  <main class="page" role="main" style="margin-top:30px">
-    <div class="container">
+@php
+  // Defaults seguros si el controlador no envía la variable
+  $dependencia = $dependencia ?? [
+      'clave_dependencia'       => '155',
+      'unidad_administrativa'   => '001',
+      'nombre'                  => 'INSTITUTO MEXICANO DEL TRANSPORTE',
+  ];
+@endphp
 
-      {{-- MENSAJES (sin duplicados) --}}
-      @if (session('wizard_error'))
-        <div class="alert alert-danger" role="alert">{{ session('wizard_error') }}</div>
-      @endif
-      @if (session('success'))
-        <div class="alert alert-success" role="alert">{{ session('success') }}</div>
-      @endif
+<main class="page" role="main" style="margin-top:30px">
+  <div class="container">
 
-      {{-- LOGOS --}}
-      <div class="banner-logos" aria-label="Encabezado visual">
-        <img class="left" src="{{ asset('images/comunicaciones.png') }}" alt="Logotipo de Comunicaciones (SICT)" loading="lazy">
-        <img class="right" src="{{ asset('images/imt.png') }}" alt="Logotipo del Instituto Mexicano del Transporte" loading="lazy">
-      </div>
+    {{-- MENSAJES --}}
+    @if (session('wizard_error'))
+      <div class="alert alert-danger" role="alert">{{ session('wizard_error') }}</div>
+    @endif
+    @if (session('success'))
+      <div class="alert alert-success" role="alert">{{ session('success') }}</div>
+    @endif
 
-      {{-- TÍTULO --}}
-      <div class="subrayado-dorado">
-        <center><h1 class="titulo-bienvenida">Bienvenido a PAGA IMT</h1></center>
-      </div>
+    {{-- LOGOS --}}
+    <div class="banner-logos" aria-label="Encabezado visual">
+      <img class="left" src="{{ asset('images/comunicaciones.png') }}" alt="Logotipo de Comunicaciones (SICT)" loading="lazy">
+      <img class="right" src="{{ asset('images/imt.png') }}" alt="Logotipo del Instituto Mexicano del Transporte" loading="lazy">
+    </div>
 
-      {{-- ACORDEÓN con botón POST (no enlaces directos) --}}
-      <div class="panel-group acordeon" id="acordeon-dependencia" role="tablist" aria-multiselectable="true">
-        <div class="panel panel-default">
-          <div class="panel-heading" role="tab" id="heading-sict">
-            <a class="heading-toggle"
-               role="button"
-               data-toggle="collapse"
-               data-parent="#acordeon-dependencia"
-               href="#collapse-sict"
-               aria-expanded="true"
-               aria-controls="collapse-sict">
-              <span>Secretaría de Infraestructura, Comunicaciones y Transportes</span>
-              <span class="toggle-indicator" aria-hidden="true"></span>
-            </a>
-          </div>
+    {{-- TÍTULO --}}
+    <div class="subrayado-dorado">
+      <center><h1 class="titulo-bienvenida">Bienvenido a PAGA IMT</h1></center>
+    </div>
 
-          <div id="collapse-sict" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-sict">
-            <div class="panel-body">
-              {{-- Al hacer clic, enviamos los valores fijos 155 / 001 para guardarlos en sesión --}}
-              <form action="{{ route('inicio.next') }}" method="POST" style="display:inline">
-                @csrf
-                <input type="hidden" name="cve_dependencia" value="155">
-                <input type="hidden" name="unidad_administrativa" value="001">
-                <button type="submit" class="link-like" aria-label="Ir a Instituto Mexicano del Transporte">
-                  Instituto Mexicano del Transporte
-                </button>
-              </form>
-            </div>
-          </div>
+    {{-- ACORDEÓN --}}
+    <div class="panel-group acordeon" id="acordeon-dependencia" role="tablist" aria-multiselectable="true">
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="heading-sict">
+          <a class="heading-toggle"
+             role="button"
+             data-toggle="collapse"
+             data-parent="#acordeon-dependencia"
+             href="#collapse-sict"
+             aria-expanded="true"
+             aria-controls="collapse-sict">
+            <span>Secretaría de Infraestructura, Comunicaciones y Transportes</span>
+            <span class="toggle-indicator" aria-hidden="true"></span>
+          </a>
         </div>
 
-        {{-- Puedes agregar aquí más panels si se suman otras UAs o dependencias --}}
-        {{-- <div class="panel panel-default"> ... </div> --}}
+        <div id="collapse-sict" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-sict">
+          <div class="panel-body">
+            {{-- Botón que arranca el flujo con los valores de dependencia --}}
+            <form action="{{ route('inicio.next') }}" method="POST" style="display:inline">
+              @csrf
+              <input type="hidden" name="cve_dependencia" value="{{ $dependencia['clave_dependencia'] }}">
+              <input type="hidden" name="unidad_administrativa" value="{{ $dependencia['unidad_administrativa'] }}">
+              <button type="submit" class="link-like" aria-label="Ir a {{ $dependencia['nombre'] }}">
+                {{ $dependencia['nombre'] }}
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
 
-      {{-- Pie/nota opcional --}}
-      <p style="margin-top:20px; color:#666; font-size:13px;">
-        Selecciona la dependencia para iniciar el trámite de pago y generación de línea de captura.
-      </p>
-
+      {{-- Si en el futuro agregas más dependencias/UAs, duplica el panel anterior --}}
+      {{-- <div class="panel panel-default"> ... </div> --}}
     </div>
-  </main>
 
-  <!-- Script oficial para header/footer y componentes -->
-  <script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>
+    <p style="margin-top:20px; color:#666; font-size:13px;">
+      Selecciona la dependencia para iniciar el trámite de pago y generación de línea de captura.
+    </p>
+
+  </div>
+</main>
+
+<script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>
 </body>
 </html>

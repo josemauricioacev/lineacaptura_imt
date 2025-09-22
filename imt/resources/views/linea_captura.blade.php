@@ -13,7 +13,9 @@
 
   <style>
     :root{ --gob-primary:#611232; --borde:#e5e5e5; }
-    body, h1,h2,h3,h4,h5,h6,p,a,li,label,th,td{ font-family:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif!important; }
+    body, h1,h2,h3,h4,h5,h6,p,a,li,label,th,td{
+      font-family:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif!important;
+    }
     .titulo-pagina{ color:#111; font-weight:700; margin:8px 0 14px; line-height:1.15; }
     .card{
       border:1px solid var(--borde); border-radius:8px; background:#fff; margin-bottom:16px;
@@ -26,13 +28,17 @@
     .tabla{ width:100%; border-collapse:collapse; }
     .tabla th, .tabla td{ padding:8px 10px; border-top:1px solid var(--borde); vertical-align:top; }
     .tabla thead th{ border-top:none; color:#444; }
-    .mono{ font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .mono{
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
     .totales td{ font-weight:600; }
     .cta{ display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
     .btn, .btn:hover, .btn:focus, .btn:active{ text-decoration:none!important; }
     .btn.btn-primary{ background:#611232; color:#fff!important; border:1px solid #611232; }
     .btn.btn-primary:hover{ background:#4d0e29; border-color:#4d0e29; }
     .btn.btn-default{ background:#fff; border:1px solid #ccc; color:#444!important; }
+    .kv{ display:flex; gap:8px; align-items:baseline; }
+    .kv strong{ min-width:220px; }
     @media print{
       .no-print{ display:none!important; }
       body{ background:#fff; }
@@ -54,21 +60,40 @@
           <table class="tabla">
             <tbody>
               <tr>
-                <td style="width:35%"><strong>Id de Solicitud</strong></td>
+                <td style="width:35%"><strong>ID de Solicitud</strong></td>
                 <td class="mono">{{ $resumen['control']['id_solicitud'] }}</td>
               </tr>
+
+              {{-- Bloque de Dependencia con NOMBRE + CLAVE + U.A. --}}
               <tr>
                 <td><strong>Dependencia</strong></td>
                 <td>
-                  <div><strong>CveDependencia:</strong> {{ $resumen['dependencia']['CveDependencia'] }}</div>
-                  <div><strong>UnidadAdministrativa:</strong> {{ $resumen['dependencia']['UnidadAdministrativa'] }}</div>
+                  <div class="kv">
+                    <strong>Nombre:</strong>
+                    <span>{{ $resumen['dependencia']['Nombre'] ?? 'INSTITUTO MEXICANO DEL TRANSPORTE' }}</span>
+                  </div>
+                  <div class="kv">
+                    <strong>Clave de dependencia:</strong>
+                    <span class="mono">{{ $resumen['dependencia']['CveDependencia'] ?? '155' }}</span>
+                  </div>
+                  <div class="kv">
+                    <strong>Unidad administrativa:</strong>
+                    <span class="mono">{{ $resumen['dependencia']['UnidadAdministrativa'] ?? '001' }}</span>
+                  </div>
                 </td>
               </tr>
+
               <tr>
                 <td><strong>Fechas</strong></td>
                 <td>
-                  <div><strong>Fecha de solicitud:</strong> {{ $resumen['fechas']['solicitud']->format('d/m/Y H:i') }}</div>
-                  <div><strong>Fecha de vigencia:</strong> {{ $resumen['fechas']['vigencia']->format('d/m/Y') }}</div>
+                  <div class="kv">
+                    <strong>Fecha de solicitud:</strong>
+                    <span>{{ $resumen['fechas']['solicitud']->format('d/m/Y H:i') }}</span>
+                  </div>
+                  <div class="kv">
+                    <strong>Fecha de vigencia:</strong>
+                    <span>{{ $resumen['fechas']['vigencia']->format('d/m/Y') }}</span>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -85,21 +110,43 @@
         <div class="card-header">Datos del contribuyente</div>
         <div class="card-body">
           @php $p = $resumen['persona'] ?? []; @endphp
+
           @if(($p['tipoPersona'] ?? '') === 'Persona Moral')
             <table class="tabla">
               <tbody>
-                <tr><td style="width:35%"><strong>Tipo de persona</strong></td><td>Persona Moral</td></tr>
-                <tr><td><strong>RFC</strong></td><td class="mono">{{ $p['rfc'] }}</td></tr>
-                <tr><td><strong>Razón social</strong></td><td>{{ $p['razon'] }}</td></tr>
+                <tr>
+                  <td style="width:35%"><strong>Tipo de persona</strong></td>
+                  <td>Persona Moral</td>
+                </tr>
+                <tr>
+                  <td><strong>RFC</strong></td>
+                  <td class="mono">{{ $p['rfc'] }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Razón social</strong></td>
+                  <td>{{ $p['razon'] }}</td>
+                </tr>
               </tbody>
             </table>
           @else
             <table class="tabla">
               <tbody>
-                <tr><td style="width:35%"><strong>Tipo de persona</strong></td><td>Persona Física</td></tr>
-                <tr><td><strong>RFC</strong></td><td class="mono">{{ $p['rfc'] ?? '' }}</td></tr>
-                <tr><td><strong>CURP</strong></td><td class="mono">{{ $p['curp'] ?? '' }}</td></tr>
-                <tr><td><strong>Nombre</strong></td><td>{{ ($p['nombres'] ?? '').' '.($p['ap1'] ?? '').' '.($p['ap2'] ?? '') }}</td></tr>
+                <tr>
+                  <td style="width:35%"><strong>Tipo de persona</strong></td>
+                  <td>Persona Física</td>
+                </tr>
+                <tr>
+                  <td><strong>RFC</strong></td>
+                  <td class="mono">{{ $p['rfc'] ?? '' }}</td>
+                </tr>
+                <tr>
+                  <td><strong>CURP</strong></td>
+                  <td class="mono">{{ $p['curp'] ?? '' }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Nombre</strong></td>
+                  <td>{{ trim(($p['nombres'] ?? '').' '.($p['ap1'] ?? '').' '.($p['ap2'] ?? '')) }}</td>
+                </tr>
               </tbody>
             </table>
           @endif

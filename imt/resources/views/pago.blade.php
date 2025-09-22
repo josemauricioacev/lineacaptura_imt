@@ -91,13 +91,9 @@
       <p class="lbl-muted">Verifique los datos para la generación de su línea de captura.</p>
 
       @php
-        // Datos del concepto desde sesión (si ya migraste la selección dinámica)
         $c = $concepto ?? null;
-
-        // Unitario en centavos (si no hay concepto, dejamos 400 MXN como ejemplo)
-        $unitCents = $c['importe'] ?? 40000; // 400.00
+        $unitCents = $c['importe'] ?? 40000; // 400.00 default
         $unitPesos = number_format($unitCents / 100, 2, '.', ',');
-
         $desc      = $c['descripcion'] ?? 'CONCEPTO SELECCIONADO';
         $homoclave = $c['homoclave'] ?? '—';
       @endphp
@@ -188,7 +184,6 @@
         ivaTxt.textContent   = '$' + fmt(iva/100);
         totalTxt.innerHTML   = '<strong>$'+ fmt(total/100) +'</strong>';
 
-        // set hidden fields for POST
         cantidadHidden.value = qty;
         subtotalHidden.value = subtotal;
         ivaHidden.value      = iva;
@@ -198,7 +193,6 @@
       cantidad.addEventListener('input', recalc);
       recalc();
 
-      // Copia la cantidad visible al campo oculto por seguridad justo al enviar
       document.getElementById('formGenerar').addEventListener('submit', function(){
         cantidadHidden.value = Math.max(1, parseInt(cantidad.value || '1', 10));
         recalc();
